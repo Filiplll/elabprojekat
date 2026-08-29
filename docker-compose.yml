@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  # Backend Laravel kontejner
+  app:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: tereni_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./back:/var/www
+      - /var/www/vendor
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - tereni
+
+  # Frontend kontejner
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: tereni_front
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - tereni
+
+  # MySQL baza
+  mysql:
+    image: mysql:8.0
+    container_name: tereni_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-tereni}
+      MYSQL_USER: ${DB_USERNAME:-tereni}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-tereni_pass}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_pass}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-p${DB_ROOT_PASSWORD:-root_pass}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - tereni
+
+  # PhpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: tereni_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "8080:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - tereni
+
+volumes:
+  mysql_data:
+
+networks:
+  tereni:
+    driver: bridge
