@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,40 +9,80 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
+        'ime',
+        'prezime',
         'email',
         'password',
+        'type',
+        'banovan',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'banovan' => 'boolean',
         ];
+    }
+
+    public function tereni()
+    {
+        return $this->hasMany(Teren::class, 'vlasnik_id');
+    }
+
+    public function rezervacije()
+    {
+        return $this->hasMany(Rezervacija::class, 'igrac_id');
+    }
+
+    public function prijave()
+    {
+        return $this->hasMany(PozivUcesnik::class, 'igrac_id');
+    }
+
+    public function pozivi()
+    {
+        return $this->belongsToMany(JavniPoziv::class, 'poziv_ucesnici', 'igrac_id', 'poziv_id')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+
+    public function recenzije()
+    {
+        return $this->hasMany(Recenzija::class, 'igrac_id');
+    }
+
+    public function scopeBanovani($query)
+    {
+        return $query->where('banovan', true);
+    }
+
+    public function getPunoImeAttribute(): string
+    {
+        return "{$this->ime} {$this->prezime}";
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->type === 'admin';
+    }
+
+    public function isVlasnik(): bool
+    {
+        return $this->type === 'vlasnik';
+    }
+
+    public function isIgrac(): bool
+    {
+        return $this->type === 'igrac';
     }
 }
