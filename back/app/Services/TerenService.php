@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Teren;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -14,6 +15,15 @@ class TerenService
             Teren::query()->aktivni()->with(['sportovi', 'vlasnik', 'radnoVreme']),
             $filters
         );
+    }
+
+    public function getAktivanTeren(Teren $teren): Teren
+    {
+        if (! $teren->aktivan) {
+            throw new Exception('Teren trenutno nije u ponudi.', 404);
+        }
+
+        return $teren->load(['sportovi', 'vlasnik', 'radnoVreme']);
     }
 
     private function primeniFiltere(Builder $query, array $filters): LengthAwarePaginator

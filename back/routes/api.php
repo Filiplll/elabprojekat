@@ -16,4 +16,5 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/tereni', [TerenController::class, 'index']);
+    Route::get('/tereni/{teren}', [TerenController::class, 'show']);
 });
