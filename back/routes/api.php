@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RezervacijaController;
 use App\Http\Controllers\TerenController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,4 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/tereni', [TerenController::class, 'index']);
     Route::get('/tereni/{teren}', [TerenController::class, 'show']);
+    Route::get('/tereni/{teren}/slobodni-termini', [RezervacijaController::class, 'slobodniTermini']);
 });
