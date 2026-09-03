@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JavniPozivController;
+use App\Http\Controllers\PozivUcesnikController;
 use App\Http\Controllers\RezervacijaController;
 use App\Http\Controllers\TerenController;
 use Illuminate\Http\Request;
@@ -24,4 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tereni/{teren}/rezervacije', [RezervacijaController::class, 'store']);
     Route::patch('/rezervacije/{rezervacija}', [RezervacijaController::class, 'update']);
     Route::patch('/rezervacije/{rezervacija}/otkazi', [RezervacijaController::class, 'otkazi']);
+
+    Route::get('/pozivi', [JavniPozivController::class, 'index']);
+    Route::get('/pozivi/{poziv}', [JavniPozivController::class, 'show']);
+    Route::post('/rezervacije/{rezervacija}/poziv', [JavniPozivController::class, 'store']);
+    Route::patch('/pozivi/{poziv}', [JavniPozivController::class, 'update']);
+    Route::patch('/pozivi/{poziv}/otkazi', [JavniPozivController::class, 'otkazi']);
+    Route::post('/pozivi/{poziv}/pridruzi', [PozivUcesnikController::class, 'store']);
+    Route::delete('/pozivi/{poziv}/pridruzi', [PozivUcesnikController::class, 'destroy']);
 });
