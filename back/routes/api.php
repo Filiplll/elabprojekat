@@ -19,4 +19,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tereni', [TerenController::class, 'index']);
     Route::get('/tereni/{teren}', [TerenController::class, 'show']);
     Route::get('/tereni/{teren}/slobodni-termini', [RezervacijaController::class, 'slobodniTermini']);
+
+    Route::get('/moje-rezervacije', [RezervacijaController::class, 'index']);
+    Route::post('/tereni/{teren}/rezervacije', [RezervacijaController::class, 'store']);
+    Route::patch('/rezervacije/{rezervacija}', [RezervacijaController::class, 'update']);
+    Route::patch('/rezervacije/{rezervacija}/otkazi', [RezervacijaController::class, 'otkazi']);
 });
