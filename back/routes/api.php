@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JavniPozivController;
 use App\Http\Controllers\PozivUcesnikController;
+use App\Http\Controllers\RecenzijaController;
 use App\Http\Controllers\RezervacijaController;
 use App\Http\Controllers\TerenController;
 use Illuminate\Http\Request;
@@ -34,4 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/pozivi/{poziv}/otkazi', [JavniPozivController::class, 'otkazi']);
     Route::post('/pozivi/{poziv}/pridruzi', [PozivUcesnikController::class, 'store']);
     Route::delete('/pozivi/{poziv}/pridruzi', [PozivUcesnikController::class, 'destroy']);
+
+    Route::get('/tereni/{teren}/recenzije', [RecenzijaController::class, 'zaTeren']);
+    Route::post('/rezervacije/{rezervacija}/recenzija', [RecenzijaController::class, 'store']);
+    Route::patch('/recenzije/{recenzija}', [RecenzijaController::class, 'update']);
 });
