@@ -67,6 +67,24 @@ class RezervacijaManager
         return $rezervacija;
     }
 
+    public function promeniStatus(Rezervacija $rezervacija, string $status): Rezervacija
+    {
+        $rezervacija = $this->rezervacijaService->promeniStatus($rezervacija, $status);
+
+        $potvrdjena = $rezervacija->status === 'potvrdjena';
+
+        $this->obavesti(
+            $rezervacija,
+            'igrac',
+            $potvrdjena ? 'Rezervacija je potvrđena' : 'Rezervacija je otkazana',
+            $potvrdjena
+                ? 'Vlasnik terena je potvrdio tvoju rezervaciju. Vidimo se na terenu.'
+                : 'Vlasnik terena je otkazao tvoju rezervaciju.'
+        );
+
+        return $rezervacija;
+    }
+
     private function obavesti(Rezervacija $rezervacija, string $primalac, string $naslov, string $poruka, array $dodatno = []): void
     {
         $rezervacija->loadMissing(['teren.vlasnik', 'igrac']);

@@ -6,6 +6,8 @@ use App\Http\Controllers\PozivUcesnikController;
 use App\Http\Controllers\RecenzijaController;
 use App\Http\Controllers\RezervacijaController;
 use App\Http\Controllers\TerenController;
+use App\Http\Controllers\Vlasnik\RezervacijaController as VlasnikRezervacijaController;
+use App\Http\Controllers\Vlasnik\TerenController as VlasnikTerenController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +41,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tereni/{teren}/recenzije', [RecenzijaController::class, 'zaTeren']);
     Route::post('/rezervacije/{rezervacija}/recenzija', [RecenzijaController::class, 'store']);
     Route::patch('/recenzije/{recenzija}', [RecenzijaController::class, 'update']);
+
+    Route::prefix('vlasnik')->group(function () {
+        Route::get('/tereni', [VlasnikTerenController::class, 'index']);
+        Route::post('/tereni', [VlasnikTerenController::class, 'store']);
+        Route::get('/tereni/{teren}', [VlasnikTerenController::class, 'show']);
+        Route::put('/tereni/{teren}', [VlasnikTerenController::class, 'update']);
+        Route::delete('/tereni/{teren}', [VlasnikTerenController::class, 'destroy']);
+
+        Route::get('/rezervacije', [VlasnikRezervacijaController::class, 'index']);
+        Route::patch('/rezervacije/{rezervacija}/status', [VlasnikRezervacijaController::class, 'status']);
+    });
 });

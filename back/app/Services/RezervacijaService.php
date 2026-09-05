@@ -18,6 +18,11 @@ class RezervacijaService
 
     private const NAJKRACE = 60;
 
+    private const DOZVOLJENI_PRELAZI = [
+        'na_cekanju' => ['potvrdjena', 'otkazana'],
+        'potvrdjena' => ['otkazana'],
+    ];
+
     public function getMojeRezervacije(array $filters, User $igrac): LengthAwarePaginator
     {
         return $this->primeniFiltere(
@@ -26,6 +31,32 @@ class RezervacijaService
                 ->with(['teren', 'javniPoziv', 'recenzije' => fn ($q) => $q->where('igrac_id', $igrac->id)]),
             $filters
         );
+    }
+
+    public function getRezervacijeVlasnika(array $filters, User $vlasnik): LengthAwarePaginator
+    {
+        return $this->primeniFiltere(
+            Rezervacija::query()
+                ->whereHas('teren', fn ($q) => $q->where('vlasnik_id', $vlasnik->id))
+                ->with(['teren', 'igrac', 'javniPoziv', 'recenzije' => fn ($q) => $q->where('igrac_id', $vlasnik->id)]),
+            $filters
+        );
+    }
+
+    public function promeniStatus(Rezervacija $rezervacija, string $status): Rezervacija
+    {
+        $dozvoljeni = self::DOZVOLJENI_PRELAZI[$rezervacija->status] ?? [];
+
+        if (! in_array($status, $dozvoljeni, true)) {
+            throw new Exception(
+                "Rezervacija u statusu '{$rezervacija->status}' ne može preći u '{$status}'.",
+                409
+            );
+        }
+
+        $rezervacija->update(['status' => $status]);
+
+        return $rezervacija->refresh()->load(['teren', 'igrac']);
     }
 
     public function kreiraj(Teren $teren, array $data, User $igrac): Rezervacija
