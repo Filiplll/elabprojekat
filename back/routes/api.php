@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JavniPozivController;
 use App\Http\Controllers\PozivUcesnikController;
@@ -51,5 +52,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/rezervacije', [VlasnikRezervacijaController::class, 'index']);
         Route::patch('/rezervacije/{rezervacija}/status', [VlasnikRezervacijaController::class, 'status']);
+    });
+
+    Route::prefix('admin')->group(function () {
+        Route::get('/sportovi', [SportController::class, 'index']);
+        Route::post('/sportovi', [SportController::class, 'store']);
+        Route::put('/sportovi/{sport}', [SportController::class, 'update']);
+        Route::delete('/sportovi/{sport}', [SportController::class, 'destroy']);
     });
 });
