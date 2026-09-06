@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\SportController;
+use App\Http\Controllers\Admin\TerenController as AdminTerenController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JavniPozivController;
@@ -63,5 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/users', [UserController::class, 'index']);
         Route::patch('/users/{user}/ban', [UserController::class, 'ban']);
+
+        Route::get('/tereni', [AdminTerenController::class, 'index']);
     });
 });

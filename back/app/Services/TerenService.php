@@ -28,6 +28,14 @@ class TerenService
         return $teren->load(['sportovi', 'vlasnik', 'radnoVreme']);
     }
 
+    public function getSveTerene(array $filters): LengthAwarePaginator
+    {
+        return $this->primeniFiltere(
+            Teren::query()->with(['sportovi', 'vlasnik', 'radnoVreme'])->withCount('rezervacije'),
+            $filters
+        );
+    }
+
     public function getAllTereni(array $filters, User $vlasnik): LengthAwarePaginator
     {
         return $this->primeniFiltere(
