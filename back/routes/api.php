@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\RecenzijaController as AdminRecenzijaController;
 use App\Http\Controllers\Admin\SportController;
 use App\Http\Controllers\Admin\TerenController as AdminTerenController;
 use App\Http\Controllers\Admin\UserController;
@@ -66,5 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/users/{user}/ban', [UserController::class, 'ban']);
 
         Route::get('/tereni', [AdminTerenController::class, 'index']);
+
+        Route::get('/recenzije', [AdminRecenzijaController::class, 'index']);
+        Route::patch('/recenzije/{recenzija}/status', [AdminRecenzijaController::class, 'status']);
     });
 });

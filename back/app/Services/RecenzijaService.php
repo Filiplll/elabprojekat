@@ -59,6 +59,30 @@ class RecenzijaService
         return $recenzija->refresh()->load(['igrac', 'rezervacija.teren']);
     }
 
+    public function getSveRecenzije(array $filters): LengthAwarePaginator
+    {
+        $query = Recenzija::query()->with(['igrac', 'rezervacija.teren']);
+
+        $query->when(isset($filters['status']), fn ($q) => $q->where('status', $filters['status']));
+        $query->when(isset($filters['teren_id']), fn ($q) => $q->whereHas(
+            'rezervacija',
+            fn ($r) => $r->where('teren_id', $filters['teren_id'])
+        ));
+
+        return $this->primeniFiltere($query, $filters);
+    }
+
+    public function promeniStatus(Recenzija $recenzija, string $status): Recenzija
+    {
+        if ($recenzija->status === $status) {
+            throw new Exception("Recenzija je već u statusu '{$status}'.", 409);
+        }
+
+        $recenzija->update(['status' => $status]);
+
+        return $recenzija->refresh()->load(['igrac', 'rezervacija.teren']);
+    }
+
     private function primeniFiltere(Builder $query, array $filters): LengthAwarePaginator
     {
         $query->when(isset($filters['ocena']), fn ($q) => $q->where('ocena', $filters['ocena']));
