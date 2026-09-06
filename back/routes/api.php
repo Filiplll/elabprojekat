@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\SportController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JavniPozivController;
 use App\Http\Controllers\PozivUcesnikController;
@@ -59,5 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/sportovi', [SportController::class, 'store']);
         Route::put('/sportovi/{sport}', [SportController::class, 'update']);
         Route::delete('/sportovi/{sport}', [SportController::class, 'destroy']);
+
+        Route::get('/users', [UserController::class, 'index']);
+        Route::patch('/users/{user}/ban', [UserController::class, 'ban']);
     });
 });
