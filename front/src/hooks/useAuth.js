@@ -45,6 +45,34 @@ export const useAuth = () => {
     }
   };
 
+  const register = async (userData) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await api.post("/register", userData);
+      const isSuccess =
+        res.data?.success || res.status === 200 || res.status === 201;
+
+      if (isSuccess) {
+        return { success: true, data: res.data };
+      }
+
+      const errMsg = res.data?.error || "Greška pri registraciji.";
+      setError(errMsg);
+      return { success: false, error: errMsg };
+    } catch (err) {
+      const errorMessage = extractError(
+        err,
+        "Došlo je do greške prilikom registracije.",
+      );
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     setLoading(true);
     try {
@@ -65,6 +93,7 @@ export const useAuth = () => {
     error,
     setError,
     login,
+    register,
     logout,
   };
 };
