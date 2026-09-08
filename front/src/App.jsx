@@ -4,6 +4,7 @@ import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import TereniPage from "./pages/TereniPage";
+import TerenDetailsPage from "./pages/TerenDetailsPage";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<HomePage />} />
           <Route path="/tereni" element={<TereniPage />} />
+          <Route path="/tereni/:id" element={<TerenDetailsPage />} />
         </Route>
 
         <Route

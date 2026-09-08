@@ -1,4 +1,6 @@
-import { MapPin } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import Button from "../ui/Button";
 
 export default function TerenCard({ teren }) {
   return (
@@ -55,6 +57,16 @@ export default function TerenCard({ teren }) {
             {teren.cena_po_satu} RSD
           </span>
         </div>
+
+        <Link to={`/tereni/${teren.id}`}>
+          <Button
+            variant="secondary"
+            icon={ArrowRight}
+            className="text-sm py-2 px-3.5 border-slate-200 hover:border-emerald-600 hover:text-emerald-600"
+          >
+            Detaljnije
+          </Button>
+        </Link>
       </div>
     </div>
   );
