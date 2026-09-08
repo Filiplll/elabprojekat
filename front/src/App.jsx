@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import TereniPage from "./pages/TereniPage";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<HomePage />} />
+          <Route path="/tereni" element={<TereniPage />} />
         </Route>
 
         <Route

@@ -3,7 +3,10 @@ import { LogOut } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import Button from "./Button";
 
-const commonRoutes = [{ path: "/home", label: "Početna" }];
+const commonRoutes = [
+  { path: "/home", label: "Početna" },
+  { path: "/tereni", label: "Tereni" },
+];
 
 const roleRoutes = {
   igrac: [],
