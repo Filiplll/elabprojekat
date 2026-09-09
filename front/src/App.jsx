@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import TereniPage from "./pages/TereniPage";
 import TerenDetailsPage from "./pages/TerenDetailsPage";
+import TerenForm from "./pages/TerenFormPage";
 
 export default function App() {
   return (
@@ -17,6 +18,11 @@ export default function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/tereni" element={<TereniPage />} />
           <Route path="/tereni/:id" element={<TerenDetailsPage />} />
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={["vlasnik"]} />}>
+          <Route path="/tereni/:id/izmena" element={<TerenForm />} />
+          <Route path="/create-teren" element={<TerenForm />} />
         </Route>
 
         <Route

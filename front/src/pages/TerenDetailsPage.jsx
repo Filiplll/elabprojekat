@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { ArrowLeft, Trash2, Edit } from "lucide-react";
 import Navbar from "../components/ui/Navbar";
 import { useTereni } from "../hooks/useTereni";
 import { useAuth } from "../hooks/useAuth";
@@ -78,6 +78,12 @@ export default function TerenDetailsPage() {
                 >
                   Obriši teren
                 </Button>
+
+                <Link to={`/tereni/${id}/izmena`}>
+                  <Button variant="primary" icon={Edit} className="py-2 px-4">
+                    Izmeni teren
+                  </Button>
+                </Link>
               </>
             )}
           </div>

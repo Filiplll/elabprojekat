@@ -96,6 +96,14 @@ export default function TereniPage() {
                   Moji tereni
                 </button>
               </div>
+
+              <Link
+                to="/create-teren"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                Dodaj novi teren
+              </Link>
             </div>
           )}
 

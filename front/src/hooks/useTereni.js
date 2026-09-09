@@ -75,6 +75,49 @@ export function useTereni() {
     }
   };
 
+  const createTeren = async (terenData) => {
+    setActionLoading(true);
+    setError(null);
+
+    try {
+      const response = await api.post("/vlasnik/tereni", terenData);
+      const data = response.data.data || response.data;
+
+      return data;
+    } catch (err) {
+      console.log(err.response);
+      const errorMessage =
+        err.response?.data?.message ||
+        "Došlo je do greške prilikom kreiranja terena.";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const updateTeren = async (id, terenData) => {
+    setActionLoading(true);
+    setError(null);
+
+    try {
+      const response = await api.put(`/vlasnik/tereni/${id}`, terenData);
+      const data = response.data.data || response.data;
+
+      setTeren(data);
+      return data;
+    } catch (err) {
+      console.log(err.response);
+      const errorMessage =
+        err.response?.data?.message ||
+        "Došlo je do greške prilikom ažuriranja terena.";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const deleteTeren = async (id) => {
     setActionLoading(true);
     setError(null);
@@ -110,6 +153,8 @@ export function useTereni() {
     error,
     fetchTereni,
     fetchTerenById,
+    createTeren,
+    updateTeren,
     deleteTeren,
   };
 }
