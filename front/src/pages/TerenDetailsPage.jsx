@@ -117,6 +117,9 @@ export default function TerenDetailsPage() {
 
   const isOwner = user?.type === "vlasnik" && user?.id === teren.vlasnik?.id;
   const isPlayer = user?.type === "igrac";
+  const rezervacijeUrl = isOwner
+    ? `/rezervacije?teren_id=${id}`
+    : `/moje-rezervacije?teren_id=${id}`;
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -130,6 +133,14 @@ export default function TerenDetailsPage() {
           </Button>
 
           <div className="flex items-center gap-3">
+            {(isOwner || isPlayer) && (
+              <Link to={rezervacijeUrl}>
+                <Button variant="outline" icon={Calendar} className="py-2 px-4">
+                  Rezervacije
+                </Button>
+              </Link>
+            )}
+
             {isOwner && (
               <>
                 <Button

@@ -9,8 +9,8 @@ const commonRoutes = [
 ];
 
 const roleRoutes = {
-  igrac: [],
-  vlasnik: [],
+  igrac: [{ path: "/moje-rezervacije", label: "Moje rezervacije" }],
+  vlasnik: [{ path: "/rezervacije", label: "Rezervacije" }],
   admin: [
     { path: "/korisnici", label: "Korisnici" },
     { path: "/sportovi", label: "Sportovi" },

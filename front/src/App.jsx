@@ -8,6 +8,7 @@ import TerenDetailsPage from "./pages/TerenDetailsPage";
 import TerenForm from "./pages/TerenFormPage";
 import AdminKorisniciPage from "./pages/AdminKorisniciPage";
 import AdminSportoviPage from "./pages/AdminSportoviPage";
+import RezervacijePage from "./pages/RezervacijePage";
 
 export default function App() {
   return (
@@ -22,9 +23,14 @@ export default function App() {
           <Route path="/tereni/:id" element={<TerenDetailsPage />} />
         </Route>
 
+        <Route element={<ProtectedRoute allowedRoles={["igrac"]} />}>
+          <Route path="/moje-rezervacije" element={<RezervacijePage />} />
+        </Route>
+
         <Route element={<ProtectedRoute allowedRoles={["vlasnik"]} />}>
           <Route path="/tereni/:id/izmena" element={<TerenForm />} />
           <Route path="/create-teren" element={<TerenForm />} />
+          <Route path="/rezervacije" element={<RezervacijePage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
