@@ -7,6 +7,7 @@ import TereniPage from "./pages/TereniPage";
 import TerenDetailsPage from "./pages/TerenDetailsPage";
 import TerenForm from "./pages/TerenFormPage";
 import AdminKorisniciPage from "./pages/AdminKorisniciPage";
+import AdminSportoviPage from "./pages/AdminSportoviPage";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+          <Route path="/sportovi" element={<AdminSportoviPage />} />
           <Route path="/korisnici" element={<AdminKorisniciPage />} />
         </Route>
 

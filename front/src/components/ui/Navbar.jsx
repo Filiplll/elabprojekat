@@ -11,7 +11,10 @@ const commonRoutes = [
 const roleRoutes = {
   igrac: [],
   vlasnik: [],
-  admin: [{ path: "/korisnici", label: "Korisnici" }],
+  admin: [
+    { path: "/korisnici", label: "Korisnici" },
+    { path: "/sportovi", label: "Sportovi" },
+  ],
 };
 
 const roleLabels = {
