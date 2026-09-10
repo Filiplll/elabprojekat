@@ -1,14 +1,45 @@
 import { useState } from "react";
-import { Calendar, Clock, MapPin, User, Check, X } from "lucide-react";
+import { Calendar, Clock, MapPin, User, Check, X, Star } from "lucide-react";
 import Button from "../ui/Button";
+import ReviewModal from "../recenzije/ReviewModal";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function RezervacijaCard({
   rezervacija,
   onStatusChange,
   actionLoading,
+  kreirajRecenziju,
+  izmeniRecenziju,
+  onSubmitted,
 }) {
   const { user } = useAuth();
+
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewSubmitLoading, setReviewSubmitLoading] = useState(false);
+
+  const mojaRecenzija = rezervacija.moja_recenzija;
+
+  const handleReviewSubmit = async (data) => {
+    setReviewSubmitLoading(true);
+
+    let res;
+    if (mojaRecenzija) {
+      res = await izmeniRecenziju(mojaRecenzija.id, data);
+    } else {
+      res = await kreirajRecenziju(rezervacija.id, data);
+    }
+
+    setReviewSubmitLoading(false);
+
+    if (res?.success) {
+      setIsReviewModalOpen(false);
+      if (onSubmitted) {
+        onSubmitted();
+      }
+    } else if (res?.error) {
+      alert(res.error);
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -97,6 +128,25 @@ export default function RezervacijaCard({
           )}
         </div>
 
+        {isPlayer && mojaRecenzija && (
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-slate-700 flex items-center gap-1">
+                Vaša recenzija:
+                <span className="text-amber-500 font-bold ml-1">
+                  {mojaRecenzija.ocena_prikaz || `${mojaRecenzija.ocena} ★`}
+                </span>
+              </span>
+              <Button onClick={() => setIsReviewModalOpen(true)}>Izmeni</Button>
+            </div>
+            {mojaRecenzija.komentar && (
+              <p className="text-slate-600 italic">
+                "{mojaRecenzija.komentar}"
+              </p>
+            )}
+          </div>
+        )}
+
         <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-2">
           <div>
             <span className="text-xs text-slate-500 block">Ukupna cena</span>
@@ -146,10 +196,31 @@ export default function RezervacijaCard({
                   Otkaži rezervaciju
                 </Button>
               )}
+
+              {rezervacija.status === "odigrana" && !mojaRecenzija && (
+                <Button
+                  type="button"
+                  variant="primary"
+                  disabled={actionLoading}
+                  onClick={() => setIsReviewModalOpen(true)}
+                  className="py-1.5 px-3 text-xs bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <Star className="w-3.5 h-3.5 mr-1" />
+                  Ostavi recenziju
+                </Button>
+              )}
             </div>
           )}
         </div>
       </div>
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        onSubmit={handleReviewSubmit}
+        initialData={mojaRecenzija}
+        loading={reviewSubmitLoading}
+      />
     </>
   );
 }

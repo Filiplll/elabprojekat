@@ -7,6 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useRezervacije } from "../hooks/useRezervacije";
 import RezervacijeFilterBar from "../components/rezervacije/RezervacijeFilterBar";
 import RezervacijaCard from "../components/rezervacije/RezervacijaCard";
+import { useReviews } from "../hooks/useReviews";
 
 export default function RezervacijePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,6 +26,8 @@ export default function RezervacijePage() {
     promeniStatusRezervacije,
     otkaziRezervaciju,
   } = useRezervacije();
+
+  const { kreirajRecenziju, izmeniRecenziju } = useReviews();
 
   const filters = {
     teren_id: searchParams.get("teren_id") || "",
@@ -126,6 +129,9 @@ export default function RezervacijePage() {
                   rezervacija={rezervacija}
                   onStatusChange={handleStatusChange}
                   actionLoading={actionLoading}
+                  kreirajRecenziju={kreirajRecenziju}
+                  izmeniRecenziju={izmeniRecenziju}
+                  onSubmitted={loadReservations}
                 />
               ))}
             </div>
