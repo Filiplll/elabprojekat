@@ -1,8 +1,19 @@
 import { useState } from "react";
-import { Calendar, Clock, MapPin, User, Check, X, Star } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  User,
+  Check,
+  X,
+  Star,
+  Users,
+  Loader2,
+} from "lucide-react";
 import Button from "../ui/Button";
 import ReviewModal from "../recenzije/ReviewModal";
 import { useAuth } from "../../hooks/useAuth";
+import JavniPozivModal from "../javniPozivi/JavniPozivModal";
 
 export default function RezervacijaCard({
   rezervacija,
@@ -11,11 +22,20 @@ export default function RezervacijaCard({
   kreirajRecenziju,
   izmeniRecenziju,
   onSubmitted,
+  kreirajJavniPoziv,
 }) {
   const { user } = useAuth();
 
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewSubmitLoading, setReviewSubmitLoading] = useState(false);
+
+  const [isJavniPozivModalOpen, setIsJavniPozivModalOpen] = useState(false);
+  const [javniPozivLoading, setJavniPozivLoading] = useState(false);
+  const [javniPozivFormData, setJavniPozivFormData] = useState({
+    rezervacijaId: rezervacija.id,
+    broj_slobodnih_mesta: 1,
+    opis: "",
+  });
 
   const mojaRecenzija = rezervacija.moja_recenzija;
 
@@ -33,6 +53,33 @@ export default function RezervacijaCard({
 
     if (res?.success) {
       setIsReviewModalOpen(false);
+      if (onSubmitted) {
+        onSubmitted();
+      }
+    } else if (res?.error) {
+      alert(res.error);
+    }
+  };
+
+  const handleOpenJavniPozivModal = () => {
+    setJavniPozivFormData({
+      rezervacijaId: rezervacija.id,
+      broj_slobodnih_mesta: 1,
+      opis: "",
+    });
+    setIsJavniPozivModalOpen(true);
+  };
+
+  const handleJavniPozivSubmit = async (e) => {
+    e.preventDefault();
+    if (!kreirajJavniPoziv) return;
+
+    setJavniPozivLoading(true);
+    const res = await kreirajJavniPoziv(javniPozivFormData);
+    setJavniPozivLoading(false);
+
+    if (res?.success) {
+      setIsJavniPozivModalOpen(false);
       if (onSubmitted) {
         onSubmitted();
       }
@@ -73,6 +120,7 @@ export default function RezervacijaCard({
 
   const isOwner = user?.type === "vlasnik";
   const isPlayer = user?.type === "igrac";
+  const haveCall = rezervacija.ima_javni_poziv;
 
   const prikazaniKorisnik = isOwner ? rezervacija.igrac : "";
 
@@ -183,6 +231,21 @@ export default function RezervacijaCard({
 
           {isPlayer && (
             <div className="flex items-center gap-2">
+              {rezervacija.status === "potvrdjena" &&
+                kreirajJavniPoziv &&
+                !haveCall && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={actionLoading}
+                    onClick={handleOpenJavniPozivModal}
+                    className="py-1.5 px-3 text-xs border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                  >
+                    <Users className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+                    Javni poziv
+                  </Button>
+                )}
+
               {(rezervacija.status === "na_cekanju" ||
                 rezervacija.status === "potvrdjena") && (
                 <Button
@@ -220,6 +283,16 @@ export default function RezervacijaCard({
         onSubmit={handleReviewSubmit}
         initialData={mojaRecenzija}
         loading={reviewSubmitLoading}
+      />
+
+      <JavniPozivModal
+        isOpen={isJavniPozivModalOpen}
+        mode="create"
+        formData={javniPozivFormData}
+        setFormData={setJavniPozivFormData}
+        onSubmit={handleJavniPozivSubmit}
+        onClose={() => setIsJavniPozivModalOpen(false)}
+        loading={javniPozivLoading}
       />
     </>
   );

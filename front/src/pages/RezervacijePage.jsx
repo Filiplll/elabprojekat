@@ -7,6 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useRezervacije } from "../hooks/useRezervacije";
 import RezervacijeFilterBar from "../components/rezervacije/RezervacijeFilterBar";
 import RezervacijaCard from "../components/rezervacije/RezervacijaCard";
+import { useJavniPozivi } from "../hooks/useJavniPozivi";
 import { useReviews } from "../hooks/useReviews";
 
 export default function RezervacijePage() {
@@ -28,6 +29,7 @@ export default function RezervacijePage() {
   } = useRezervacije();
 
   const { kreirajRecenziju, izmeniRecenziju } = useReviews();
+  const { kreirajJavniPoziv } = useJavniPozivi();
 
   const filters = {
     teren_id: searchParams.get("teren_id") || "",
@@ -132,6 +134,7 @@ export default function RezervacijePage() {
                   kreirajRecenziju={kreirajRecenziju}
                   izmeniRecenziju={izmeniRecenziju}
                   onSubmitted={loadReservations}
+                  kreirajJavniPoziv={kreirajJavniPoziv}
                 />
               ))}
             </div>
