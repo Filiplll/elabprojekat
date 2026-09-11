@@ -14,6 +14,7 @@ const roleRoutes = {
   admin: [
     { path: "/korisnici", label: "Korisnici" },
     { path: "/sportovi", label: "Sportovi" },
+    { path: "/recenzije", label: "Recenzije" },
   ],
 };
 

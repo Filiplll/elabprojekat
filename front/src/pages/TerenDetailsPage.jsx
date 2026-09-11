@@ -133,6 +133,11 @@ export default function TerenDetailsPage() {
           </Button>
 
           <div className="flex items-center gap-3">
+            <Link to={`/recenzije?teren_id=${id}`}>
+              <Button variant="outline" icon={Notebook} className="py-2 px-4">
+                Recenzije
+              </Button>
+            </Link>
             {(isOwner || isPlayer) && (
               <Link to={rezervacijeUrl}>
                 <Button variant="outline" icon={Calendar} className="py-2 px-4">
