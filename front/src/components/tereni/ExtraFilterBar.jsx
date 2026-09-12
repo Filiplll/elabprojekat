@@ -12,7 +12,35 @@ import Input from "../ui/Input";
 import Button from "../ui/Button";
 import Select from "../ui/Select";
 
-export default function ExtraFiltersBar({ onResetAll }) {
+const popularCurrencies = [
+  "RSD",
+  "EUR",
+  "USD",
+  "GBP",
+  "CHF",
+  "AUD",
+  "CAD",
+  "JPY",
+  "HRK",
+  "BAM",
+  "HUF",
+  "SEK",
+  "NOK",
+  "TRY",
+  "RUB",
+  "CNY",
+  "AED",
+  "KWD",
+  "PLN",
+  "DKK",
+];
+
+export default function ExtraFiltersBar({
+  onResetAll,
+  rates = {},
+  selectedCurrency = "RSD",
+  onCurrencyChange,
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const nazivFromUrl = searchParams.get("naziv") || "";
@@ -20,21 +48,30 @@ export default function ExtraFiltersBar({ onResetAll }) {
   const orderFromUrl = searchParams.get("order") || "asc";
   const rsdCenaFromUrl = searchParams.get("max_cena");
 
+  const rate = rates[selectedCurrency] || 1;
+  const initialMaxCena = rsdCenaFromUrl
+    ? String(Math.round(Number(rsdCenaFromUrl) * rate))
+    : "";
+
   const [naziv, setNaziv] = useState(nazivFromUrl);
   const [sortBy, setSortBy] = useState(sortByFromUrl);
   const [order, setOrder] = useState(orderFromUrl);
-  const [maxCenaInput, setMaxCenaInput] = useState(rsdCenaFromUrl);
+  const [maxCenaInput, setMaxCenaInput] = useState(initialMaxCena);
 
   const [prevParams, setPrevParams] = useState({
     searchParams,
+    selectedCurrency,
   });
 
-  if (prevParams.searchParams !== searchParams) {
-    setPrevParams({ searchParams });
+  if (
+    prevParams.searchParams !== searchParams ||
+    prevParams.selectedCurrency !== selectedCurrency
+  ) {
+    setPrevParams({ searchParams, selectedCurrency });
     setNaziv(nazivFromUrl);
     setSortBy(sortByFromUrl);
     setOrder(orderFromUrl);
-    setMaxCenaInput(rsdCenaFromUrl);
+    setMaxCenaInput(initialMaxCena);
   }
 
   const sortOptions = [
@@ -48,6 +85,26 @@ export default function ExtraFiltersBar({ onResetAll }) {
     { value: "asc", label: "Rastuće (A-Z / Min)" },
     { value: "desc", label: "Opadajuće (Z-A / Max)" },
   ];
+
+  const currencyOptions = popularCurrencies.map((curr) => ({
+    value: curr,
+    label: curr,
+  }));
+
+  const handleCurrencySelect = (newCurrency) => {
+    onCurrencyChange(newCurrency);
+
+    if (maxCenaInput) {
+      const currentRate = rates[selectedCurrency] || 1;
+      const rsdValue = Number(maxCenaInput) / currentRate;
+
+      const newRate = rates[newCurrency] || 1;
+      const newInputVal = Math.round(rsdValue * newRate);
+      setMaxCenaInput(String(newInputVal));
+
+      applyFiltersToUrl(naziv, String(Math.round(rsdValue)), sortBy, order);
+    }
+  };
 
   const applyFiltersToUrl = (nazivVal, maxCenaRsdVal, sortByVal, orderVal) => {
     const newParams = new URLSearchParams(searchParams);
@@ -70,7 +127,12 @@ export default function ExtraFiltersBar({ onResetAll }) {
 
   const handleApplyExtraFilters = (e) => {
     e.preventDefault();
-    applyFiltersToUrl(naziv, maxCenaInput, sortBy, order);
+    let rsdPrice = "";
+    if (maxCenaInput) {
+      const currentRate = rates[selectedCurrency] || 1;
+      rsdPrice = String(Math.round(Number(maxCenaInput) / currentRate));
+    }
+    applyFiltersToUrl(naziv, rsdPrice, sortBy, order);
   };
 
   return (
@@ -93,10 +155,18 @@ export default function ExtraFiltersBar({ onResetAll }) {
 
         <Input
           type="number"
-          placeholder="Max cena"
+          placeholder={`Max cena (${selectedCurrency})`}
           icon={DollarSign}
           value={maxCenaInput}
           onChange={(e) => setMaxCenaInput(e.target.value)}
+        />
+
+        <Select
+          icon={Coins}
+          value={selectedCurrency}
+          onChange={(e) => handleCurrencySelect(e.target.value)}
+          options={currencyOptions}
+          placeholder="Valuta"
         />
 
         <Select

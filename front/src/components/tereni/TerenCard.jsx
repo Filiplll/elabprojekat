@@ -1,8 +1,14 @@
-import { MapPin, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { MapPin, ArrowRight } from "lucide-react";
 import Button from "../ui/Button";
 
-export default function TerenCard({ teren }) {
+export default function TerenCard({
+  teren,
+  selectedCurrency = "RSD",
+  rate = 1,
+}) {
+  const convertedPrice = Math.round(Number(teren.cena_po_satu || 0) * rate);
+
   return (
     <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between overflow-hidden group">
       <div className="p-6 space-y-4">
@@ -54,7 +60,7 @@ export default function TerenCard({ teren }) {
             Cena po satu
           </span>
           <span className="text-lg font-bold text-emerald-600">
-            {teren.cena_po_satu} RSD
+            {convertedPrice.toLocaleString()} {selectedCurrency}
           </span>
         </div>
 

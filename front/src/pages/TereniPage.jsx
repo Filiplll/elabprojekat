@@ -4,15 +4,16 @@ import { Building2, Globe, Plus } from "lucide-react";
 
 import Navbar from "../components/ui/Navbar";
 import SearchSection from "../components/tereni/SearchSection";
-import TereniSkeleton from "../components/tereni/TereniSkeleton";
-import ErrorState from "../components/ui/ErrorState";
 import { useTereni } from "../hooks/useTereni";
 import { useSportovi } from "../hooks/useSportovi";
+import TereniSkeleton from "../components/tereni/TereniSkeleton";
+import ErrorState from "../components/ui/ErrorState";
 import EmptyState from "../components/ui/EmptyState";
 import TerenCard from "../components/tereni/TerenCard";
 import Pagination from "../components/ui/Pagination";
 import ExtraFiltersBar from "../components/tereni/ExtraFilterBar";
 import { useAuth } from "../hooks/useAuth";
+import { useExchangeRates } from "../hooks/useExchangeRates";
 
 export default function TereniPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,6 +22,7 @@ export default function TereniPage() {
 
   const { tereni, meta, loading, error, fetchTereni } = useTereni();
   const { sportovi, fetchSportovi } = useSportovi();
+  const { rates, selectedCurrency, setSelectedCurrency } = useExchangeRates();
 
   const currentView = searchParams.get("view") === "my" ? "my" : "all";
   const isVlasnik = user?.type === "vlasnik";
@@ -107,7 +109,12 @@ export default function TereniPage() {
             </div>
           )}
 
-          <ExtraFiltersBar onResetAll={handleResetFilters} />
+          <ExtraFiltersBar
+            onResetAll={handleResetFilters}
+            rates={rates}
+            selectedCurrency={selectedCurrency}
+            onCurrencyChange={setSelectedCurrency}
+          />
 
           {loading && <TereniSkeleton count={6} />}
 
@@ -123,7 +130,12 @@ export default function TereniPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {tereni.map((teren) => (
-                  <TerenCard key={teren.id} teren={teren} />
+                  <TerenCard
+                    key={teren.id}
+                    teren={teren}
+                    selectedCurrency={selectedCurrency}
+                    rate={rates[selectedCurrency] || 1}
+                  />
                 ))}
               </div>
 
