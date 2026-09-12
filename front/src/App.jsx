@@ -10,6 +10,7 @@ import AdminKorisniciPage from "./pages/AdminKorisniciPage";
 import AdminSportoviPage from "./pages/AdminSportoviPage";
 import RezervacijePage from "./pages/RezervacijePage";
 import RecenzijePage from "./pages/RecenzijePage";
+import JavniPoziviPage from "./pages/JavniPoziviPage";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
 
         <Route element={<ProtectedRoute allowedRoles={["igrac"]} />}>
           <Route path="/moje-rezervacije" element={<RezervacijePage />} />
+          <Route path="/javni-pozivi" element={<JavniPoziviPage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["vlasnik"]} />}>
