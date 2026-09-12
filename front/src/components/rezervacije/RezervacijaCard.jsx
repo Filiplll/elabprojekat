@@ -8,12 +8,31 @@ import {
   X,
   Star,
   Users,
+  Sun,
+  Cloud,
+  CloudRain,
+  Snowflake,
+  CloudLightning,
   Loader2,
 } from "lucide-react";
 import Button from "../ui/Button";
 import ReviewModal from "../recenzije/ReviewModal";
 import { useAuth } from "../../hooks/useAuth";
 import JavniPozivModal from "../javniPozivi/JavniPozivModal";
+import { usePrognoza } from "../../hooks/usePrognoza";
+
+const getWeatherIcon = (code) => {
+  if (code === 0 || code === 1)
+    return <Sun className="w-4 h-4 text-amber-500" />;
+  if (code === 2 || code === 3)
+    return <Cloud className="w-4 h-4 text-slate-400" />;
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82))
+    return <CloudRain className="w-4 h-4 text-blue-500" />;
+  if (code >= 71 && code <= 77)
+    return <Snowflake className="w-4 h-4 text-cyan-400" />;
+  if (code >= 95) return <CloudLightning className="w-4 h-4 text-purple-500" />;
+  return <Cloud className="w-4 h-4 text-slate-400" />;
+};
 
 export default function RezervacijaCard({
   rezervacija,
@@ -36,6 +55,14 @@ export default function RezervacijaCard({
     broj_slobodnih_mesta: 1,
     opis: "",
   });
+
+  const isStatusValidForWeather =
+    rezervacija.status === "potvrdjena" || rezervacija.status === "na_cekanju";
+
+  const { data: weather, loading: weatherLoading } = usePrognoza(
+    isStatusValidForWeather ? rezervacija.teren?.grad : null,
+    isStatusValidForWeather ? rezervacija.datum : null,
+  );
 
   const mojaRecenzija = rezervacija.moja_recenzija;
 
@@ -175,6 +202,31 @@ export default function RezervacijaCard({
             </div>
           )}
         </div>
+
+        {weatherLoading && (
+          <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span>Učitavanje prognoze...</span>
+          </div>
+        )}
+
+        {weather && !weatherLoading && (
+          <div className="flex items-center justify-between bg-sky-50/60 border border-sky-100 rounded-xl p-2.5 text-xs">
+            <div className="flex items-center gap-2">
+              {getWeatherIcon(weather.weatherCode)}
+              <span className="font-semibold text-slate-700">
+                Prognoza: {weather.minTemp}°C / {weather.maxTemp}°C
+              </span>
+            </div>
+            {weather.kisaMm > 0 ? (
+              <span className="text-blue-600 font-medium">
+                Kiša: {weather.kisaMm} mm
+              </span>
+            ) : (
+              <span className="text-slate-500">Bez padavina</span>
+            )}
+          </div>
+        )}
 
         {isPlayer && mojaRecenzija && (
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1">
