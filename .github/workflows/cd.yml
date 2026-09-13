@@ -95,3 +95,14 @@ jobs:
           context: ./front
           push: true
           tags: ghcr.io/filiplll/elabprojekat-frontend:latest
+
+  deploy:
+    name: Trigger Render Deployment
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Backend to Render
+        run: curl -f -X POST ${{ secrets.RENDER_BACKEND_HOOK }}
+
+      - name: Deploy Frontend to Render
+        run: curl -f -X POST ${{ secrets.RENDER_FRONTEND_HOOK }}
